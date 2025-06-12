@@ -4,7 +4,7 @@ Ambient display with clock, weather and advanced features without tracking you o
 
 # THIS GURASURAISU INSTANCE IS IN BETA. IT IS NOT STABLE, AND WILL NEVER BE.
 
-**Visit at https://gurasuraisu.github.io**
+**Visit at https://gurasuraisu.github.io/beta**
 
 Gurapps are apps that extend your Gurasuraisu experience. The GitHub repository for each Gurapp are seperate from the `gurasuraisu.github.io` GitHub repository.
 
