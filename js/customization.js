@@ -131,8 +131,10 @@ function updateMinimalMode() {
 // --- Quick Controls (Temperature & Brightness) ---
 
 function updateBrightness(value) {
+    if (!DOM.brightnessOverlay) return; // Safety check
     DOM.brightnessValue.textContent = `${value}%`;
     const darknessLevel = (100 - value) / 100;
+    // THIS LINE WILL NO LONGER CRASH
     DOM.brightnessOverlay.style.backgroundColor = `rgba(0, 0, 0, ${darknessLevel})`;
     
     const icon = DOM.brightnessValue.previousElementSibling;
@@ -140,17 +142,15 @@ function updateBrightness(value) {
 }
 
 function updateTemperature(value) {
+    if (!DOM.temperatureOverlay) return; // Safety check
     const tempValue = parseInt(value);
     const intensity = Math.abs(tempValue) / 10;
     let r, g, b, a;
 
-    if (tempValue < 0) { // Cool
-        r = 200; g = 220; b = 255; a = intensity;
-    } else if (tempValue > 0) { // Warm
-        r = 255; g = 220; b = 180; a = intensity;
-    } else { // Neutral
-        r = g = b = 255; a = 0;
-    }
+    if (tempValue < 0) { r = 200; g = 220; b = 255; a = intensity; }
+    else if (tempValue > 0) { r = 255; g = 220; b = 180; a = intensity; }
+    else { r = g = b = 255; a = 0; }
+    
     DOM.temperatureOverlay.style.backgroundColor = `rgba(${r}, ${g}, ${b}, ${a})`;
 }
 
@@ -196,6 +196,23 @@ export function initCustomization() {
     const powerButton = document.querySelector('.btn-qc'); // Find the power button
     if (powerButton) {
         powerButton.addEventListener('click', blackoutScreen);
+    }
+
+    if (DOM.brightnessOverlay) {
+        Object.assign(DOM.brightnessOverlay.style, {
+            position: 'fixed', top: '0', left: '0',
+            width: '100%', height: '100%',
+            pointerEvents: 'none', zIndex: '9999999'
+        });
+    }
+    
+    if (DOM.temperatureOverlay) {
+        Object.assign(DOM.temperatureOverlay.style, {
+            position: 'fixed', top: '0', left: '0',
+            width: '100%', height: '100%',
+            pointerEvents: 'none', zIndex: '9999998',
+            mixBlendMode: 'multiply'
+        });
     }
 
     // --- General Switches ---
