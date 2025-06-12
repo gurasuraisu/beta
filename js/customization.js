@@ -270,6 +270,15 @@ export function initCustomization() {
         }
     });
 
+    window.addEventListener('style-settings-changed', () => {
+        // This function will be called when the wallpaper changes.
+        // It re-applies styles and updates the UI controls to match the new wallpaper's settings.
+        applyClockStyles();
+        setupFontSelection(); // Re-initializes sliders/pickers to the new state
+        DOM.secondsSwitch.checked = state.showSeconds;
+        // Add other UI updates here if needed
+    });
+
     // Reset Button
     DOM.resetButton.addEventListener('click', () => {
         if (confirm(getCurrentLanguage().RESET_CONFIRM)) {
