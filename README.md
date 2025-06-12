@@ -1,6 +1,8 @@
 ![favicon](https://github.com/user-attachments/assets/48c1a6bc-4e8c-4c77-9126-12146139b667)
-# Gurasuraisu (Made for GitHub Pages)
+# Gurasuraisu BETA (Made for GitHub Pages)
 Ambient display with clock, weather and advanced features without tracking you or displaying ads.
+
+# THIS GURASURAISU INSTANCE IS IN BETA. IT IS NOT STABLE, AND WILL NEVER BE.
 
 **Visit at https://gurasuraisu.github.io**
 
