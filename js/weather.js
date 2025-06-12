@@ -72,7 +72,7 @@ async function fetchLocationAndWeather() {
                 const temperatureUnit = getTemperatureUnit(countryCode);
                 const tempUnitParam = `&temperature_unit=${temperatureUnit}`;
                 
-                const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}¤t_weather=true&timezone=${encodeURIComponent(timezone)}${tempUnitParam}`;
+                const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}current_weather=true&timezone=${encodeURIComponent(timezone)}${tempUnitParam}`;
                 
                 const weatherResponse = await fetch(weatherUrl);
                 const weatherData = await weatherResponse.json();
