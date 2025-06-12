@@ -1,6 +1,6 @@
 // EN, JP, DE, FR, ES, KO & ZH translation variables for Gurasuraisu
 
-const LANG_EN = {
+export const LANG_EN = {
     GREETING: "Gurasuraisu loaded successfully",
     LICENCE: "Gurasuraisu is made by kirbIndustries, and is licensed under the GNU General Public License, Version 2.0 (GPL-2.0)",
     WELCOME_MESSAGE: "Hello, welcome to Gurasuraisu!",
@@ -100,7 +100,7 @@ const LANG_EN = {
     CLOCK_STACK: "Clock Stack"
 };
 
-const LANG_JP = {
+export const LANG_JP = {
     GREETING: "Gurasuraisu を正常に読み込みました。",
     LICENCE: "Gurasuraisu は kirbIndustries によって作成され、GNU General Public License, Version 2.0 (GPL-2.0) の下でライセンスされています。",
     WELCOME_MESSAGE: "こんにちは、ぐらすりすへようこそ！",
@@ -200,7 +200,7 @@ const LANG_JP = {
     CLOCK_STACK: "クロックスタック"
 };
 
-const LANG_DE = {
+export const LANG_DE = {
     GREETING: "Gurasuraisu erfolgreich geladen",
     LICENCE: "Gurasuraisu wird von kirbIndustries erstellt und ist unter der GNU General Public License, Version 2.0 (GPL-2.0) lizenziert.",
     WELCOME_MESSAGE: "Hallo, willkommen bei Gurasuraisu!",
@@ -300,7 +300,7 @@ const LANG_DE = {
     CLOCK_STACK: "Uhr-Stapel"
 };
 
-const LANG_FR = {
+export const LANG_FR = {
     GREETING: "Gurasuraisu chargé avec succès",
     LICENCE: "Gurasuraisu est créé par kirbIndustries, et est sous licence GNU General Public License, Version 2.0 (GPL-2.0)",
     WELCOME_MESSAGE: "Bonjour, bienvenue sur Gurasuraisu !",
@@ -400,7 +400,7 @@ const LANG_FR = {
     CLOCK_STACK: "Pile d'horloge"
 };
 
-const LANG_ES = {
+export const LANG_ES = {
     GREETING: "Gurasuraisu cargado con éxito",
     LICENCE: "Gurasuraisu es creado por kirbIndustries y está licenciado bajo la Licencia Pública General de GNU, Versión 2.0 (GPL-2.0).",
     WELCOME_MESSAGE: "¡Hola, bienvenido a Gurasuraisu!",
@@ -500,7 +500,7 @@ const LANG_ES = {
     CLOCK_STACK: "Pila de reloj"
 };
 
-const LANG_KO = {
+export const LANG_KO = {
     GREETING: "Gurasuraisu가 성공적으로 로드되었습니다",
     LICENCE: "Gurasuraisu는 kirbIndustries에서 제작되었으며 GNU General Public License, Version 2.0 (GPL-2.0)에 따라 라이선스가 부여됩니다.",
     WELCOME_MESSAGE: "안녕하세요, Gurasuraisu에 오신 것을 환영합니다!",
@@ -600,7 +600,7 @@ const LANG_KO = {
     CLOCK_STACK: "시계 스택"
 };
 
-const LANG_ZH = {
+export const LANG_ZH = {
     GREETING: "Gurasuraisu加载成功",
     LICENCE: "Gurasuraisu由kirbIndustries制作，并根据GNU通用公共许可证，版本2.0（GPL-2.0）获得许可",
     WELCOME_MESSAGE: "你好，欢迎来到Gurasuraisu！",
