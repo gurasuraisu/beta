@@ -5,6 +5,18 @@ const DOM = {};
 
 // This function will be called AFTER the DOM is loaded.
 export function initDOM() {
+    // --- Create and inject essential overlay elements that are missing from HTML ---
+    if (!document.getElementById('brightness-overlay')) {
+        const brightnessOverlay = document.createElement('div');
+        brightnessOverlay.id = 'brightness-overlay';
+        document.body.appendChild(brightnessOverlay);
+    }
+    if (!document.getElementById('temperature-overlay')) {
+        const temperatureOverlay = document.createElement('div');
+        temperatureOverlay.id = 'temperature-overlay';
+        document.body.appendChild(temperatureOverlay);
+    }
+    
     // Main containers
     DOM.appDrawer = document.getElementById('app-drawer');
     DOM.appGrid = document.getElementById('app-grid');
