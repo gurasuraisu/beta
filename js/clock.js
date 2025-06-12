@@ -173,4 +173,5 @@ export function initClock() {
     
     // Set initial state of the switch
     DOM.hourFormatSwitch.checked = state.use12HourFormat;
+    window.addEventListener('style-settings-changed', updateClockAndDate);
 }
