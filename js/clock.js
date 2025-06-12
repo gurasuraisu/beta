@@ -135,7 +135,7 @@ function updateTitle() {
         }
     }
 
-    document.title = `${timeString}${weatherString}`;
+    document.title = `${timeString}${weatherString} β`;
 }
 
 /**
