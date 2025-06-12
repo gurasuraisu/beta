@@ -1,3 +1,4 @@
+import DOM, { initDOM } from './dom.js';
 import { state } from './state.js';
 import { preventLeaving, goFullscreen, isFullScreen, checkIfPWA } from './utils.js';
 import { initI18n } from './i18n.js';
@@ -16,7 +17,9 @@ import { getCurrentLanguage } from './i18n.js';
  * This function is called once the DOM is fully loaded.
  */
 function main() {
-    console.log("Initializing Gurasu Raisu...");
+    initDOM();
+    
+    console.log("Initializing Gurasuraisu...");
 
     // Initialize core modules first
     initI18n();
