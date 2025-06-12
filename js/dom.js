@@ -1,78 +1,68 @@
 // js/dom.js
 
-// Exporting all DOM element queries to a single file for easy management.
-export default {
+// Start with an empty object.
+const DOM = {};
+
+// This function will be called AFTER the DOM is loaded.
+export function initDOM() {
     // Main containers
-    appDrawer: document.getElementById('app-drawer'),
-    appGrid: document.getElementById('app-grid'),
-    dock: document.getElementById('dock'),
-    drawerHandle: document.querySelector('.drawer-handle'),
-    drawerPill: document.querySelector('.drawer-pill'),
+    DOM.appDrawer = document.getElementById('app-drawer');
+    DOM.appGrid = document.getElementById('app-grid');
+    DOM.dock = document.getElementById('dock');
+    DOM.drawerHandle = document.querySelector('.drawer-handle');
+    DOM.drawerPill = document.querySelector('.drawer-pill');
     
     // Clock & Date
-    clock: document.getElementById('clock'),
-    date: document.getElementById('date'),
-    persistentClock: document.getElementById('persistent-clock'),
+    DOM.clock = document.getElementById('clock');
+    DOM.date = document.getElementById('date');
+    DOM.persistentClock = document.getElementById('persistent-clock');
 
     // Weather
-    weatherWidget: document.getElementById('weather'),
-    temperature: document.getElementById('temperature'),
-    weatherIcon: document.getElementById('weather-icon'),
+    DOM.weatherWidget = document.getElementById('weather');
+    DOM.temperature = document.getElementById('temperature');
+    DOM.weatherIcon = document.getElementById('weather-icon');
 
     // Modals & Overlays
-    customizeModal: document.getElementById('customizeModal'),
-    blurOverlayControls: document.getElementById('blurOverlayControls'),
-    brightnessOverlay: document.getElementById('brightness-overlay'),
-    temperatureOverlay: document.getElementById('temperature-overlay'),
+    DOM.customizeModal = document.getElementById('customizeModal');
+    DOM.blurOverlayControls = document.getElementById('blurOverlayControls');
+    DOM.brightnessOverlay = document.getElementById('brightness-overlay');
+    DOM.temperatureOverlay = document.getElementById('temperature-overlay');
     
     // --- Quick Controls ---
-    // Silent Mode
-    silentSwitchQc: document.getElementById('silent_switch_qc'),
-    silentSwitch: document.getElementById('silent_switch'),
-    // Tone (Temperature)
-    tempControlQc: document.getElementById('temp_control_qc'),
-    thermostatValue: document.getElementById('thermostat-value'),
-    thermostatPopup: document.getElementById('thermostat-popup'),
-    thermostatControl: document.getElementById('thermostat-control'),
-    thermostatPopupValue: document.getElementById('thermostat-popup-value'),
-    // Minimal Mode
-    minimalModeQc: document.getElementById('minimal_mode_qc'),
-    focusSwitch: document.getElementById('focus-switch'),
-    // Daylight (Theme)
-    lightModeQc: document.getElementById('light_mode_qc'),
-    // Brightness
-    brightnessControl: document.getElementById('brightness-control'),
-    brightnessValue: document.getElementById('brightness-value'),
+    DOM.silentSwitchQc = document.getElementById('silent_switch_qc');
+    DOM.silentSwitch = document.getElementById('silent_switch');
+    DOM.tempControlQc = document.getElementById('temp_control_qc');
+    DOM.thermostatValue = document.getElementById('thermostat-value');
+    DOM.thermostatPopup = document.getElementById('thermostat-popup');
+    DOM.thermostatControl = document.getElementById('thermostat-control');
+    DOM.thermostatPopupValue = document.getElementById('thermostat-popup-value');
+    DOM.minimalModeQc = document.getElementById('minimal_mode_qc');
+    DOM.focusSwitch = document.getElementById('focus-switch');
+    DOM.lightModeQc = document.getElementById('light_mode_qc');
+    DOM.brightnessControl = document.getElementById('brightness-control');
+    DOM.brightnessValue = document.getElementById('brightness-value');
     
     // --- Customization Switches & Inputs ---
-    // Weather
-    weatherSwitch: document.getElementById('weather-switch'),
-    // Gurapps
-    gurappsSwitch: document.getElementById("gurapps-switch"),
-    // Clock Color
-    clockColorSwitch: document.getElementById('clock-color-switch'),
-    clockColorPicker: document.getElementById('clock-color-picker'),
-    // Seconds
-    secondsSwitch: document.getElementById('seconds-switch'),
-    // Motion (Animations)
-    animationSwitch: document.getElementById('animation-switch'),
-    // Contrast
-    contrastSwitch: document.getElementById('contrast-switch'),
-    // Wallpaper
-    wallpaperUpload: document.querySelector('.wallpaper-upload'),
-    uploadButton: document.getElementById('uploadButton'),
-    wallpaperInput: document.getElementById('wallpaperInput'),
-    // Clock Stack
-    clockStackSwitch: document.getElementById('clock-stack-switch'),
-    // Font Style
-    fontSelect: document.getElementById('font-select'),
-    weightSlider: document.getElementById('weight-slider'),
-    // Hour Format
-    hourFormatSwitch: document.getElementById('hour-switch'),
-    // Theme
-    themeSwitch: document.getElementById('theme-switch'),
+    DOM.weatherSwitch = document.getElementById('weather-switch');
+    DOM.gurappsSwitch = document.getElementById("gurapps-switch");
+    DOM.clockColorSwitch = document.getElementById('clock-color-switch');
+    DOM.clockColorPicker = document.getElementById('clock-color-picker');
+    DOM.secondsSwitch = document.getElementById('seconds-switch');
+    DOM.animationSwitch = document.getElementById('animation-switch');
+    DOM.contrastSwitch = document.getElementById('contrast-switch');
+    DOM.wallpaperUpload = document.querySelector('.wallpaper-upload');
+    DOM.uploadButton = document.getElementById('uploadButton');
+    DOM.wallpaperInput = document.getElementById('wallpaperInput');
+    DOM.clockStackSwitch = document.getElementById('clock-stack-switch');
+    DOM.fontSelect = document.getElementById('font-select');
+    DOM.weightSlider = document.getElementById('weight-slider');
+    DOM.hourFormatSwitch = document.getElementById('hour-switch');
+    DOM.themeSwitch = document.getElementById('theme-switch');
     
     // --- Buttons ---
-    resetButton: document.getElementById('resetButton'),
-    versionButton: document.getElementById("versionButton"),
-};
+    DOM.resetButton = document.getElementById('resetButton');
+    DOM.versionButton = document.getElementById("versionButton");
+}
+
+// Export the object that will be filled by the init function.
+export default DOM;
