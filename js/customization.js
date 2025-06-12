@@ -193,6 +193,11 @@ export function initCustomization() {
     // Setup event listeners
     setupFontSelection();
 
+    const powerButton = document.querySelector('.btn-qc'); // Find the power button
+    if (powerButton) {
+        powerButton.addEventListener('click', blackoutScreen);
+    }
+
     // --- General Switches ---
     DOM.themeSwitch.addEventListener('change', () => {
         state.theme = DOM.themeSwitch.checked ? 'light' : 'dark';
@@ -294,4 +299,33 @@ export function initCustomization() {
     DOM.versionButton.addEventListener("click", () => {
         window.open("https://kirbindustries.gitbook.io/gurasuraisu", "_blank");
     });
+}
+
+function blackoutScreen() {
+    const brightnessOverlay = document.getElementById('brightness-overlay');
+    // Save current brightness for restoration
+    localStorage.setItem('previous_brightness', state.brightness);
+
+    // Set brightness to 0 (completely dark)
+    brightnessOverlay.style.backgroundColor = 'rgba(0, 0, 0, 1)';
+    document.body.classList.add('power-save-mode');
+
+    const blockingOverlay = document.createElement('div');
+    blockingOverlay.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        z-index: 99999999; cursor: pointer; background-color: transparent;
+    `;
+
+    const restoreScreen = () => {
+        const previousBrightness = localStorage.getItem('previous_brightness') || '100';
+        const darknessLevel = (100 - previousBrightness) / 100;
+        brightnessOverlay.style.backgroundColor = `rgba(0, 0, 0, ${darknessLevel})`;
+        document.body.classList.remove('power-save-mode');
+        document.body.removeChild(blockingOverlay);
+    };
+
+    blockingOverlay.addEventListener('click', restoreScreen, { once: true });
+    blockingOverlay.addEventListener('touchstart', restoreScreen, { once: true });
+    
+    document.body.appendChild(blockingOverlay);
 }
