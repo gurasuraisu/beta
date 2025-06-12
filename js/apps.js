@@ -1,8 +1,6 @@
 import DOM from './dom.js';
 import { state, saveState } from './state.js';
-import { showPopup } from './notifications.js';
 
-// --- App Definitions & State ---
 const apps = {
     "Chronos": { url: "/chronos/index.html", icon: "alarm.png" },
     "Ailuator": { url: "/ailuator/index.html", icon: "calculator.png" },
@@ -20,35 +18,26 @@ const apps = {
 
 const minimizedEmbeds = {};
 
-// --- Core App Management ---
-
 function createFullscreenEmbed(url) {
-    // Restore from cache if possible
     if (minimizedEmbeds[url]) {
         const embedContainer = minimizedEmbeds[url];
         embedContainer.style.display = 'block';
-
-        // Brief timeout to allow display property to apply before adding transition class
         setTimeout(() => {
             embedContainer.classList.add('show');
             document.body.classList.add('app-open');
         }, 10);
-        
         delete minimizedEmbeds[url];
         return;
     }
 
-    // Create new embed
     const embedContainer = document.createElement('div');
     embedContainer.className = 'fullscreen-embed';
     embedContainer.dataset.embedUrl = url;
-
     const iframe = document.createElement('iframe');
     iframe.src = url;
     iframe.dataset.appId = Object.keys(apps).find(k => apps[k].url === url);
     iframe.setAttribute('frameborder', '0');
     iframe.setAttribute('allowfullscreen', '');
-    
     embedContainer.appendChild(iframe);
     document.body.appendChild(embedContainer);
 
@@ -61,21 +50,14 @@ function createFullscreenEmbed(url) {
 function minimizeFullscreenEmbed() {
     const embedContainer = document.querySelector('.fullscreen-embed.show');
     if (!embedContainer) return;
-
     const url = embedContainer.dataset.embedUrl;
     embedContainer.classList.remove('show');
     document.body.classList.remove('app-open');
-    
-    // After animation, hide and cache it.
     setTimeout(() => {
         embedContainer.style.display = 'none';
-        if (url) {
-            minimizedEmbeds[url] = embedContainer;
-        }
-    }, 500); // Match CSS transition duration
+        if (url) minimizedEmbeds[url] = embedContainer;
+    }, 500);
 }
-
-// --- App Drawer and Dock UI ---
 
 function populateDock() {
     DOM.dock.innerHTML = '';
@@ -92,9 +74,10 @@ function populateDock() {
         img.alt = name;
         dockIcon.appendChild(img);
         dockIcon.addEventListener('click', () => {
+            if (document.body.classList.contains('app-open')) minimizeFullscreenEmbed();
             state.appLastOpened[name] = Date.now();
             saveState('appLastOpened', state.appLastOpened);
-            createFullscreenEmbed(details.url);
+            setTimeout(() => createFullscreenEmbed(details.url), 50);
             populateDock();
         });
         DOM.dock.appendChild(dockIcon);
@@ -124,7 +107,7 @@ function createAppIcons() {
             saveState('appLastOpened', state.appLastOpened);
             createFullscreenEmbed(app.details.url);
             DOM.appDrawer.classList.remove('open');
-            DOM.blurOverlayControls.classList.remove('show'); // Assuming a general overlay for drawer
+            DOM.blurOverlayControls.classList.remove('show');
             populateDock();
         });
         DOM.appGrid.appendChild(appIcon);
@@ -139,73 +122,146 @@ function updateGurappsVisibility() {
     }
 }
 
-// --- Gesture & Interaction Handling ---
-
 function setupDrawerInteractions() {
-    let startY = 0;
-    let currentY = 0;
-    let isDragging = false;
-    
-    // Simplified logic: The original was very complex. This version is more robust.
-    // A full, pixel-perfect reimplementation of the drag physics is beyond a simple refactor.
-    // This focuses on the core open/close functionality.
+    // Dynamically create helper overlays
+    const swipeOverlay = document.createElement('div');
+    swipeOverlay.id = 'swipe-overlay';
+    document.body.appendChild(swipeOverlay);
 
-    const handleDragStart = (y) => {
+    const interactionBlocker = document.createElement('div');
+    interactionBlocker.id = 'interaction-blocker';
+    document.body.appendChild(interactionBlocker);
+
+    let isDragging = false;
+    let startY = 0, currentY = 0, lastY = 0;
+    let dragStartTime = 0;
+    let velocities = [];
+    let initialDrawerPosition = -100; // -100% (closed), 0% (open)
+
+    const flickVelocityThreshold = 0.4;
+    const dockThreshold = -2.5; // % movement to show dock
+    const openThreshold = -50;  // % movement to open drawer
+
+    const startDrag = (y) => {
         isDragging = true;
         startY = y;
+        lastY = y;
+        velocities = [];
+        dragStartTime = Date.now();
+        DOM.appDrawer.classList.add('dragging');
+        const openEmbed = document.querySelector('.fullscreen-embed.show');
+        if (openEmbed) openEmbed.classList.add('dragging');
     };
 
-    const handleDragMove = (y) => {
+    const moveDrawer = (y) => {
         if (!isDragging) return;
         currentY = y;
+        
+        const now = Date.now();
+        const deltaTime = now - dragStartTime;
+        if (deltaTime > 0) {
+            velocities.push((lastY - y) / deltaTime);
+            if (velocities.length > 5) velocities.shift();
+        }
+        lastY = y;
+
+        const deltaY = startY - currentY;
+        const movementPercentage = (deltaY / window.innerHeight) * 100;
+        const openEmbed = document.querySelector('.fullscreen-embed.show');
+
+        if (openEmbed) {
+            const progress = Math.max(0, movementPercentage / 50);
+            openEmbed.style.transform = `scale(${1 - progress * 0.1})`;
+            openEmbed.style.borderRadius = `${Math.min(25, progress * 25)}px`;
+            openEmbed.style.opacity = 1 - progress;
+        } else {
+            const newPosition = Math.max(-100, Math.min(0, initialDrawerPosition + movementPercentage));
+            DOM.appDrawer.style.transform = `translateY(${100 + newPosition}%)`;
+            interactionBlocker.style.display = (newPosition > -100 && newPosition < 0) ? 'block' : 'none';
+        }
+        
+        if (!openEmbed && movementPercentage > 2.5) {
+            DOM.dock.classList.add('show');
+        } else {
+            DOM.dock.classList.remove('show');
+        }
     };
 
-    const handleDragEnd = () => {
+    const endDrag = () => {
         if (!isDragging) return;
         isDragging = false;
-        const deltaY = startY - currentY;
-        const flickVelocity = deltaY / (Date.now() - (dragStartTime || Date.now())); // Simplified velocity check
-
+        
+        DOM.appDrawer.classList.remove('dragging');
+        DOM.appDrawer.style.transform = ''; // Let CSS handle final animation
         const openEmbed = document.querySelector('.fullscreen-embed.show');
+        if (openEmbed) openEmbed.classList.remove('dragging');
+        
+        const deltaY = startY - currentY;
+        const movementPercentage = (deltaY / window.innerHeight) * 100;
+        let avgVelocity = velocities.length > 0 ? velocities.reduce((a, b) => a + b) / velocities.length : 0;
+
         if (openEmbed) {
-            // Swipe up to close app
-            if (deltaY > 100) { 
+            openEmbed.style.transform = ''; openEmbed.style.borderRadius = ''; openEmbed.style.opacity = '';
+            if (movementPercentage > 25 || avgVelocity > flickVelocityThreshold) {
                 minimizeFullscreenEmbed();
             }
         } else {
-            // Swipe up to open drawer
-            if (deltaY > 80) {
+            const isFlick = avgVelocity > flickVelocityThreshold;
+            if (isFlick || movementPercentage > 50) {
                 DOM.appDrawer.classList.add('open');
                 DOM.blurOverlayControls.classList.add('show');
+                initialDrawerPosition = 0;
+            } else {
+                DOM.appDrawer.classList.remove('open');
+                DOM.blurOverlayControls.classList.remove('show');
+                initialDrawerPosition = -100;
             }
         }
+
+        DOM.dock.classList.remove('show');
+        interactionBlocker.style.display = 'none';
     };
     
-    let dragStartTime;
-    DOM.drawerHandle.addEventListener('mousedown', (e) => { dragStartTime = Date.now(); handleDragStart(e.clientY); });
-    document.body.addEventListener('mousemove', (e) => handleDragMove(e.clientY));
-    document.body.addEventListener('mouseup', handleDragEnd);
+    const onMouseDown = (e) => {
+        if (e.target === DOM.drawerHandle || swipeOverlay.contains(e.target)) {
+             startDrag(e.clientY);
+        }
+    };
+    const onMouseMove = (e) => moveDrawer(e.clientY);
 
-    DOM.drawerHandle.addEventListener('touchstart', (e) => { dragStartTime = Date.now(); handleDragStart(e.touches[0].clientY); }, { passive: true });
-    document.body.addEventListener('touchmove', (e) => handleDragMove(e.touches[0].clientY), { passive: true });
-    document.body.addEventListener('touchend', handleDragEnd);
+    const onTouchStart = (e) => {
+        if (e.target === DOM.drawerHandle || swipeOverlay.contains(e.target)) {
+             startDrag(e.touches[0].clientY);
+        }
+    };
+    const onTouchMove = (e) => moveDrawer(e.touches[0].clientY);
 
-    // Close drawer when clicking the overlay
+    document.addEventListener('mousedown', onMouseDown);
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', endDrag);
+
+    document.addEventListener('touchstart', onTouchStart, { passive: true });
+    document.addEventListener('touchmove', onTouchMove, { passive: true });
+    document.addEventListener('touchend', endDrag);
+
     DOM.blurOverlayControls.addEventListener('click', () => {
-        DOM.appDrawer.classList.remove('open');
-        DOM.blurOverlayControls.classList.remove('show');
-    });
-
-    // Also close the main settings modal if it's open
-    DOM.blurOverlayControls.addEventListener('click', () => {
+        if (DOM.appDrawer.classList.contains('open')) {
+            DOM.appDrawer.classList.remove('open');
+            DOM.blurOverlayControls.classList.remove('show');
+            initialDrawerPosition = -100;
+        }
         if (DOM.customizeModal.classList.contains('show')) {
             DOM.customizeModal.classList.remove('show');
-            // The overlay is already being hidden, so no need to do it twice.
+            DOM.blurOverlayControls.classList.remove('show');
         }
     });
+
+    // Watch for app-open class to show/hide the swipeOverlay
+    new MutationObserver(() => {
+        swipeOverlay.style.display = document.body.classList.contains('app-open') ? 'block' : 'none';
+    }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
 }
 
-// --- Initialization ---
 
 export function initApps() {
     updateGurappsVisibility();
@@ -219,23 +275,18 @@ export function initApps() {
         updateGurappsVisibility();
     });
 
-    window.addEventListener('message', event => {
+    window.addEventListener('message', (event) => {
         if (event.origin !== window.location.origin) return;
         const { targetApp, ...payload } = event.data;
         if (!targetApp) return;
-
         const iframe = document.querySelector(`iframe[data-app-id="${targetApp}"]`);
-        if (iframe) {
-            iframe.contentWindow.postMessage(payload, window.location.origin);
-        }
+        if (iframe) iframe.contentWindow.postMessage(payload, window.location.origin);
     });
 
-    // Add app-launching click listeners
     DOM.clock.addEventListener('click', () => state.gurappsEnabled && createFullscreenEmbed('/chronos/index.html'));
     DOM.date.addEventListener('click', () => state.gurappsEnabled && createFullscreenEmbed('/fantaskical/index.html'));
     DOM.weatherWidget.addEventListener('click', () => state.gurappsEnabled && createFullscreenEmbed('/weather/index.html'));
     
-    // Add persistent clock listener to open the main settings
     DOM.persistentClock.addEventListener('click', () => {
         DOM.customizeModal.style.display = 'block';
         DOM.blurOverlayControls.style.display = 'block';
